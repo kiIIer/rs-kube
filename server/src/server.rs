@@ -17,8 +17,8 @@ async fn run_server() -> Result<()> {
 
     let hello_worlder = hello_worlder::MyMessenger::default();
 
-    let addr = std::env::var("SERVER_ADDR").expect("SERVER_ADDR must be set");
-    let health_addr = std::env::var("HEALTH_ADDR").expect("HEALTH_ADDR must be set");
+    let addr = std::env::var("SERVER_SOCKET_ADDRESS").expect("SERVER_SOCKET_ADDRESS must be set");
+    let health_addr = std::env::var("HEALTH_ADDRESS").expect("HEALTH_ADDRESS must be set");
 
     let server_handle = Server::builder()
         .add_service(messenger_service::messenger_server::MessengerServer::new(
@@ -34,4 +34,23 @@ async fn run_server() -> Result<()> {
 
     try_join!(server_handle, health_server_handle)?;
     Ok(())
+}
+
+fn check_env_vars() {
+    dotenv::dotenv().ok();
+
+    let _ = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let _ = std::env::var("RABBIT_HOST").expect("RABBIT_HOST must be set");
+    let _ = std::env::var("RABBIT_PORT").expect("RABBIT_PORT must be set");
+    let _ = std::env::var("RABBIT_USER").expect("RABBIT_USER must be set");
+    let _ = std::env::var("RABBIT_PASSWORD").expect("RABBIT_PASSWORD must be set");
+    let _ = std::env::var("SERVER_SOCKET_ADDRESS").expect("SERVER_SOCKET_ADDRESS must be set");
+    let _ = std::env::var("AUTH0_CLIENT_ID").expect("AUTH0_CLIENT_ID must be set");
+    let _ = std::env::var("AUTH0_CLIENT_SECRET").expect("AUTH0_CLIENT_SECRET must be set");
+    let _ = std::env::var("AUTH0_AUDIENCE").expect("AUTH0_AUDIENCE must be set");
+    let _ = std::env::var("AUTH0_SERVER_N").expect("AUTH0_SERVER_N must be set");
+    let _ = std::env::var("AUTH0_SERVER_E").expect("AUTH0_SERVER_E must be set");
+    let _ = std::env::var("HEALTH_ADDRESS").expect("HEALTH_ADDRESS must be set");
+
+    println!("All required environment variables are set.");
 }
