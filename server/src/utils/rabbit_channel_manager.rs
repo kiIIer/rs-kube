@@ -57,7 +57,7 @@ impl ChannelManager for ChannelManagerImpl {
     }
 }
 
-pub fn build_rabbit_channel_manager() -> Arc<dyn ChannelManager> {
+pub fn get_channel_manager() -> Arc<dyn ChannelManager> {
     dotenv().ok();
 
     let rabbit_host = env::var("RABBIT_HOST").expect("RABBIT_HOST must be set");

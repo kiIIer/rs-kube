@@ -1,2 +1,2 @@
-mod db_connection_manager;
-mod rabbit_channel_manager;
+pub mod db_connection_manager;
+pub mod rabbit_channel_manager;
