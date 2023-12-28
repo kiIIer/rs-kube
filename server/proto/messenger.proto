@@ -10,13 +10,3 @@ message HelloRequest {
 
 message HelloResponse {
 }
-
-service Health {
-  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
-}
-
-message HealthCheckRequest {
-}
-
-message HealthCheckResponse {
-}
