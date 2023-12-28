@@ -9,7 +9,7 @@ use dotenv::dotenv;
 use tokio::sync::Mutex;
 
 #[async_trait]
-pub trait ChannelManager {
+pub trait RabbitChannelManager: Send + Sync {
     async fn get_channel(&self) -> Result<Channel, anyhow::Error>;
 }
 
@@ -32,7 +32,7 @@ impl ChannelManagerImpl {
 }
 
 #[async_trait]
-impl ChannelManager for ChannelManagerImpl {
+impl RabbitChannelManager for ChannelManagerImpl {
     async fn get_channel(&self) -> Result<Channel, anyhow::Error> {
         // Lock the connection just once
         let mut connection = self.connection.lock().await;
@@ -57,7 +57,7 @@ impl ChannelManager for ChannelManagerImpl {
     }
 }
 
-pub fn get_channel_manager() -> Arc<dyn ChannelManager> {
+pub fn get_channel_manager() -> Arc<dyn RabbitChannelManager> {
     dotenv().ok();
 
     let rabbit_host = env::var("RABBIT_HOST").expect("RABBIT_HOST must be set");

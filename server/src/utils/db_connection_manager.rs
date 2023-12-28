@@ -2,7 +2,7 @@ use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use diesel::PgConnection;
 use dotenv::dotenv;
 use std::sync::Arc;
-pub trait DBConnectionManager {
+pub trait DBConnectionManager: Send + Sync {
     fn get_connection(
         &self,
     ) -> Result<PooledConnection<ConnectionManager<PgConnection>>, r2d2::Error>;
