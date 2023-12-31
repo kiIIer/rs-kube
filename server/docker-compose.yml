@@ -1,0 +1,54 @@
+services:
+  postgresql:
+    image: bitnami/postgresql:15.5.0
+    restart: on-failure
+    # https://github.com/bitnami/containers/tree/main/bitnami/postgresql#configuration
+    environment:
+      POSTGRESQL_USERNAME: user
+      POSTGRESQL_PASSWORD: test
+      POSTGRESQL_DATABASE: db
+    healthcheck:
+      test: pg_isready -d db -h postgresql -U user
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  rabbitmq:
+    image: bitnami/rabbitmq:3.12.0
+    restart: on-failure
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: test
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 30s
+      retries: 10
+      start_period: 5s
+
+  server:
+    build:
+      context: .
+      dockerfile: ./DockerfileServer
+    environment:
+      DATABASE_URL: postgres://user:test@postgresql:5432/db
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: "5672"
+      RABBIT_USER: user
+      RABBIT_PASSWORD: test
+      SERVER_SOCKET_ADDRESS: "[::1]:50051"
+      AUTH0_CLIENT_ID: rrQ3rV7pQcy53brZTL4bPWvNe3K4Gkrr
+      AUTH0_CLIENT_SECRET: IfvajOgmDGO3Azf6zYM1n1m1c8eMLJz7TIr-oKk0x57_C1eGitFaO4wHdKurMFuK
+      AUTH0_AUDIENCE: https://crab-messenger.eu.auth0.com/api/v2/
+      AUTH0_SERVER_N: uiw2KGzPGQhkLLOEuu_wDYF7cspK9IkGS-PJHjmDluhRlfh62LsNw1Wdg72gzFTPg2GFPq9rU68RF0-JmrymQF4z9Al-RspszCXB6l3XkVHZcBC24be52HWX3EdrCNuCPi5BZ_8gDdvOBZxJRLHwLpfCDJiw9-q0BZmKQW0j80m41aC9flEplocgcWylVb6ET5D5iVjxafjhlZDOhQ2e60jPpik2OHKMAQ3BzgMOkjdK-JnDZH-f83oOGBlQguavrjMFXt-uWCL6pK5u-D-RlqFBJVtg-YJbQqBr-9sGZ8_99apC2U5aMDkdp3N9aJByQs8lq84e6SZqwmpFrb744w
+      AUTH0_SERVER_E: AQAB
+      HEALTH_ADDRESS: "[::1]:50052"
+    restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+  # test:
+  # image: ubuntu:latest

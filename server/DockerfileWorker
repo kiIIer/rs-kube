@@ -6,14 +6,14 @@ RUN apt-get update && apt-get install -y protobuf-compiler && rm -rf /var/lib/ap
 
 COPY protos/ protos/
 COPY src/ src/
-COPY Cargo.toml build.rs .env ./
+COPY Cargo.toml build.rs ./
 
 RUN cargo build --release --bin worker
 
 FROM rust:1.74
 
 COPY --from=builder /usr/src/myapp/target/release/worker /usr/local/bin/worker
-COPY --from=builder /usr/src/myapp/.env .
+# COPY --from=builder /usr/src/myapp/.env .
 
 ENV RUST_BACKTRACE 1
 CMD ["/usr/local/bin/worker"]

@@ -80,5 +80,9 @@ fn check_env_vars() {
     let _ = std::env::var("AUTH0_SERVER_E").expect("AUTH0_SERVER_E must be set");
     let _ = std::env::var("HEALTH_ADDRESS").expect("HEALTH_ADDRESS must be set");
 
+    for (key, value) in std::env::vars() {
+        println!("{} = {}", key, value);
+    }
+
     println!("All required environment variables are set.");
 }
